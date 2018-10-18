@@ -1,5 +1,6 @@
 package Filters;
 
+import java.awt.Color;
 import ij.ImagePlus;
 import ij.gui.Overlay;
 import ij.plugin.filter.PlugInFilter;
@@ -91,20 +92,19 @@ public class DT_Filter implements PlugInFilter {
     final int width = ip.getWidth();
     final int height = ip.getHeight();
 
-    long time = System.nanoTime();
     final int maxDT = dtfilter(width, height, input, output);
-    System.out.println("DTFilter: " + (System.nanoTime() - time) + " ns");
 
     final ImagePlus outputImage = new ImagePlus("DT Filter Image", out);
     outputImage.setDisplayRange(0, maxDT);
     outputImage.show();
 
-    time = System.nanoTime();
     final boolean[][] localMaxima = genLocalMaxima(width, height, output);
-    System.out.println("genLocalMaxima: " + (System.nanoTime() - time) + " ns");
 
-    // call sequence
-    final Overlay overMaxis = OverlayUtil.computeOverMaxis(localMaxima);
-    OverlayUtil.showOverlay(ip, overMaxis, "maxima");
+    final Overlay overMaxis = new Overlay();
+    OverlayUtil.computeOverMaxis(overMaxis, Color.yellow, localMaxima);
+
+    final ImagePlus impOverlay = new ImagePlus("Maxima", ip);
+    impOverlay.setOverlay(overMaxis);
+    impOverlay.show();
   }
 }
