@@ -1,19 +1,21 @@
 package Filters;
 
-import ij.ImagePlus;
 import ij.gui.Line;
 import ij.gui.Overlay;
-import ij.process.ImageProcessor;
 import java.awt.Color;
 
 /**
- *
+ * Utility Functions to display overlays
  * @author matthias
  */
-public class OverlayUtil {
+public interface OverlayUtil {
 
-  //**********************************************************************
-  // given a 2-d boolean array, put points (= lines of length 1) into overlay where array == true.
+  /**
+   * Given a 2-d boolean array, put points (= lines of length 1) into overlay where array == true.
+   * @param overlay Overlay to add points to
+   * @param color Witch color should the points have
+   * @param maxis array of points to set
+   */
   public static void computeOverMaxis(Overlay overlay, Color color, boolean[][] maxis) {
     final int lineWidth = 1;
 
@@ -32,5 +34,4 @@ public class OverlayUtil {
       }
     }
   }
-
 }
