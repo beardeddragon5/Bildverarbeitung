@@ -35,11 +35,11 @@ public interface Main {
     img.exitWhenQuitting(true);
     img.toFront();
 
-    final ImagePlus image = IJ.openImage(get("..", "BinaryObjects.png"));
+    final ImagePlus image = IJ.openImage(get("..", "Iris.jpg"));
     image.show();
 
-    IJ.openImage(get("..", "DT.png")).show();
+    IJ.openImage(get("..", "Iris_BF5_20.tif")).show();
 
-    IJ.runPlugIn(image, DT_Filter.class.getName(), "");
+    IJ.runPlugIn(image, Bilateral_Filter.class.getName(), "");
   }
 }
