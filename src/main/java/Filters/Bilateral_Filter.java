@@ -67,64 +67,86 @@ public class Bilateral_Filter implements PlugInFilter {
     new ImagePlus(name, processor).show();
   }
 
+  public int mirrorIndex(int idx, int size) {
+    if (idx < 0) {
+      idx = -idx - 1;
+    } else if (idx >= size) {
+      idx = size - (idx - size) - 1;
+    }
+    return idx;
+  }
+
+  public float[] bilateralfilter(float[] output, byte[] input, int width, int height, float sigma_s, float sigma_r) {
+    final int s = filtersize(sigma_s);
+    final int halfS = s / 2;
+    // final float[] mirror = new float[(width + s) * (height + s)];
+    final float[] weights = new float[s * s];
+    final float[] lightWeight = new float[256];
+
+    gaus(weights, s, s, sigma_s);
+    gradiant(lightWeight, sigma_r);
+    normalize(weights);
+    normalize(lightWeight);
+
+    for (int y = 0, i = 0; y < height; y++) {
+      for (int x = 0; x < width; x++, i++) {
+        final int current = input[i] & 0xff;
+        float sumW = 0;
+
+        for (int fy = 0, fi = 0; fy < s; fy++) {
+          final int nabsolutY = (y - halfS) + fy;
+          // final int mirrorY = nabsolutY + halfS;
+          final int neighbourY = mirrorIndex(nabsolutY, height);
+
+          for (int fx = 0; fx < s; fx++, fi++) {
+            final int nabsolutX = (x - halfS) + fx;
+            // final int mirrorX = nabsolutX + halfS;
+            final int neighbourX = mirrorIndex(nabsolutX, width);
+
+            final int neighbour = input[neighbourY * width + neighbourX] & 0xff;
+            final float w = weights[fi] * lightWeight[Math.abs(neighbour - current)];
+
+            sumW += w;
+            output[i] += w * neighbour;
+            // mirror[mirrorY * (width + s) + mirrorX] = neighbour;
+          }
+        }
+        output[i] /= sumW;
+      }
+    }
+
+    // debugshow("gaus", weights, s, s);
+    // debugshow("light", lightWeight, 255, 1);
+    // debugshow("mirror", mirror, width + s, height + s);
+    return output;
+  }
+
   /**
    * Run Bilaterial Filter on given ImageProcessor
    * @param ip ImageProcessor to use
    */
   @Override
   public void run(ImageProcessor ip) {
-    final ImageProcessor out = new FloatProcessor(ip.getWidth(), ip.getHeight());
     final byte[] input = (byte[]) ip.getPixels();
-    final float[] output = (float[]) out.getPixels();
     final int width = ip.getWidth();
     final int height = ip.getHeight();
+    final ImageProcessor out = new FloatProcessor(width, height);
+    final float[] output = (float[]) out.getPixels();
 
-    final float sigma_s = 5.0f;
-    final float sigma_r = 20.0f;//20.0f;
+    bilateralfilter(output, input, width, height, 5.0f, 20.0f);
 
-    final int s = filtersize(sigma_s);
-    final float[] weights = new float[s * s];
-    final float[] lightWeight = new float[256];
-    gaus(weights, s, s, sigma_s);
-    gradiant(lightWeight, sigma_r);
+    new ImagePlus("σs=5 σr=20", out).show();
 
-    System.out.println(weights[5 * s + 5] + " " + lightWeight[5]);
+    /*
+      Iris
+      σs=5 σr=20 :218
+      σs=1 σr=1 :79
+      σs=15 σr=30 :1488
 
-    normalize(weights);
-    normalize(lightWeight);
-
-    final int halfS = s / 2;
-    for (int i = 0, y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++, i++) {
-        final int current = input[i] & 0xff;
-        double sumW = 0;
-
-        for (int fi = 0, fy = 0; fy < s; fy++) {
-          int neighbourY = Math.abs((y - halfS) + fy);
-          if (neighbourY >= height) {
-            neighbourY = height - (neighbourY - height) - 1;
-          }
-          for (int fx = 0; fx < s; fx++, fi++) {
-            int neighbourX = Math.abs((x - halfS) + fx);
-            if (neighbourX >= width) {
-              neighbourX = width - (neighbourX - width) - 1;
-            }
-
-            final int neighbour = input[neighbourY * width + neighbourX] & 0xff;
-            final float w = weights[fi] * lightWeight[Math.abs(neighbour - current)];
-            sumW += w;
-            output[i] += w * neighbour;
-          }
-        }
-
-        output[i] /= sumW;
-      }
-    }
-
-    debugshow("gaus", weights, s, s);
-    debugshow("light", lightWeight, 255, 1);
-    final ImagePlus outputImage = new ImagePlus("Bilateral Filter Image", out);
-    outputImage.show();
-
+      GruenesHaus_grey
+      σs=5 σr=20 :4152
+      σs=1 σr=1 :622
+      σs=15 σr=30 :25107
+    */
   }
 }
