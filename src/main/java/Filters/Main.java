@@ -34,12 +34,21 @@ public interface Main {
     final ImageJ img = new ImageJ();
     img.exitWhenQuitting(true);
     img.toFront();
-
-    final ImagePlus image = IJ.openImage(get("..", "Iris.jpg"));
-    image.show();
-
-    IJ.openImage(get("..", "Iris_BF5_20.tif")).show();
-
-    IJ.runPlugIn(image, Bilateral_Filter.class.getName(), "");
+    // {
+    //   final ImagePlus image = IJ.openImage(get("..", "Iris.jpg"));
+    //   image.show();
+    //   IJ.openImage(get("..", "Iris_BF5_20.tif")).show();
+    //   IJ.runPlugIn(image, Bilateral_Filter.class.getName(), "");
+    // }
+    {
+      final ImagePlus image = IJ.openImage(get("..", "QR_Japan.png"));
+      image.show();
+      IJ.runPlugIn(image, ASB.class.getName(), "");
+    }
+    {
+      final ImagePlus image = IJ.openImage(get("..", "QR_LKW_grey.png"));
+      image.show();
+      IJ.runPlugIn(image, ASB.class.getName(), "");
+    }
   }
 }
