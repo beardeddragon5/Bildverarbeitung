@@ -34,4 +34,27 @@ public interface OverlayUtil {
       }
     }
   }
+
+  public static void drawRectangle(Overlay overlay, Color color, Vector2i pos, Vector2i size) {
+    final int lineWidth = 1;
+
+    final Line up = new Line(pos.x, pos.y, pos.x + size.x, pos.y);
+    final Line down = new Line(pos.x, pos.y + size.y, pos.x + size.x, pos.y + size.y);
+    final Line left = new Line(pos.x, pos.y, pos.x, pos.y + size.y);
+    final Line right = new Line(pos.x + size.x, pos.y, pos.x + size.x, pos.y + size.y);
+
+    up.setStrokeColor(color);
+    up.setStrokeWidth(lineWidth);
+    down.setStrokeColor(color);
+    down.setStrokeWidth(lineWidth);
+    left.setStrokeColor(color);
+    left.setStrokeWidth(lineWidth);
+    right.setStrokeColor(color);
+    right.setStrokeWidth(lineWidth);
+
+    overlay.add(up);
+    overlay.add(down);
+    overlay.add(left);
+    overlay.add(right);
+  }
 }

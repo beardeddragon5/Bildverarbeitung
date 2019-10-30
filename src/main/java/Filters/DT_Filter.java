@@ -1,5 +1,6 @@
 package Filters;
 
+import java.util.stream.IntStream;
 import java.util.Objects;
 import java.awt.Color;
 import ij.ImagePlus;

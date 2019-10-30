@@ -1,0 +1,5 @@
+{
+    "watch": ["src"],
+    "exec": "mvn compile exec:java",
+    "ext": "java"
+}

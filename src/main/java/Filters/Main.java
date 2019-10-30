@@ -40,15 +40,20 @@ public interface Main {
     //   IJ.openImage(get("..", "Iris_BF5_20.tif")).show();
     //   IJ.runPlugIn(image, Bilateral_Filter.class.getName(), "");
     // }
+    // {
+    //   final ImagePlus image = IJ.openImage(get("..", "QR_Japan.png"));
+    //   image.show();
+    //   IJ.runPlugIn(image, ASB.class.getName(), "");
+    // }
+    // {
+    //   final ImagePlus image = IJ.openImage(get("..", "QR_LKW_grey.png"));
+    //   image.show();
+    //   IJ.runPlugIn(image, ASB.class.getName(), "");
+    // }
     {
-      final ImagePlus image = IJ.openImage(get("..", "QR_Japan.png"));
+      final ImagePlus image = IJ.openImage(get("..", "QR_i.tif"));
       image.show();
-      IJ.runPlugIn(image, ASB.class.getName(), "");
-    }
-    {
-      final ImagePlus image = IJ.openImage(get("..", "QR_LKW_grey.png"));
-      image.show();
-      IJ.runPlugIn(image, ASB.class.getName(), "");
+      IJ.runPlugIn(image, QRCode_Filter.class.getName(), "");
     }
   }
 }

@@ -1,6 +1,5 @@
 package Filters;
 
-import java.util.Arrays;
 import ij.process.FloatProcessor;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
@@ -60,13 +59,6 @@ public class Bilateral_Filter implements PlugInFilter {
     return sum;
   }
 
-  public void debugshow(String name, float[] out, int width, int height) {
-    final ImageProcessor processor = new FloatProcessor(width, height);
-    final float[] output = (float[]) processor.getPixels();
-    System.arraycopy(out, 0, output, 0, output.length);
-    new ImagePlus(name, processor).show();
-  }
-
   public int mirrorIndex(int idx, int size) {
     if (idx < 0) {
       idx = -idx - 1;
@@ -79,7 +71,6 @@ public class Bilateral_Filter implements PlugInFilter {
   public float[] bilateralfilter(float[] output, byte[] input, int width, int height, float sigma_s, float sigma_r) {
     final int s = filtersize(sigma_s);
     final int halfS = s / 2;
-    // final float[] mirror = new float[(width + s) * (height + s)];
     final float[] weights = new float[s * s];
     final float[] lightWeight = new float[256];
 
@@ -95,12 +86,10 @@ public class Bilateral_Filter implements PlugInFilter {
 
         for (int fy = 0, fi = 0; fy < s; fy++) {
           final int nabsolutY = (y - halfS) + fy;
-          // final int mirrorY = nabsolutY + halfS;
           final int neighbourY = mirrorIndex(nabsolutY, height);
 
           for (int fx = 0; fx < s; fx++, fi++) {
             final int nabsolutX = (x - halfS) + fx;
-            // final int mirrorX = nabsolutX + halfS;
             final int neighbourX = mirrorIndex(nabsolutX, width);
 
             final int neighbour = input[neighbourY * width + neighbourX] & 0xff;
@@ -108,16 +97,11 @@ public class Bilateral_Filter implements PlugInFilter {
 
             sumW += w;
             output[i] += w * neighbour;
-            // mirror[mirrorY * (width + s) + mirrorX] = neighbour;
           }
         }
         output[i] /= sumW;
       }
     }
-
-    // debugshow("gaus", weights, s, s);
-    // debugshow("light", lightWeight, 255, 1);
-    // debugshow("mirror", mirror, width + s, height + s);
     return output;
   }
 
